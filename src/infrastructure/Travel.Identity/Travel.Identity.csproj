@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+	<ItemGroup>
+		<ProjectReference Include="..\..\core\Travel.Application\Travel.Application.csproj"/>
+	</ItemGroup>
+	<PropertyGroup>
+		<TargetFramework>net5.0</TargetFramework>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.12" NoWarn="NU1605"/>
+		<PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="5.0.12" NoWarn="NU1605"/>
+		<PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0"/>
+	</ItemGroup>
+</Project>

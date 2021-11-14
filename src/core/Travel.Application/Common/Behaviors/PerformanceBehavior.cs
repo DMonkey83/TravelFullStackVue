@@ -1,17 +1,18 @@
+﻿using MediatR;
+using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.Extensions.Logging;
 
 namespace Travel.Application.Common.Behaviors
 {
     internal class PerformanceBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
         private readonly Stopwatch _timer;
-        private readonly ILogger _logger;
+        private readonly ILogger<TRequest> _logger;
 
-        public PerformanceBehavior(ILogger<TRequest> logger)
+        public PerformanceBehavior(
+          ILogger<TRequest> logger)
         {
             _timer = new Stopwatch();
             _logger = logger;
@@ -27,7 +28,7 @@ namespace Travel.Application.Common.Behaviors
             if (elapsedMilliseconds <= 500) return response;
 
             var requestName = typeof(TRequest).Name;
-            _logger.LogWarning("Travel Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds){ @Request}", requestName, elapsedMilliseconds, request);
+            _logger.LogWarning("Travel Long Running Request: {Name} ({ElapsedMilliseconds} milliseconds) {@Request}", requestName, elapsedMilliseconds, request);
             return response;
         }
     }

@@ -1,41 +1,42 @@
+﻿using MediatR;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Travel.Application.Common.Exceptions;
 using Travel.Application.Common.Interfaces;
+using Travel.Domain.Entities;
 
 namespace Travel.Application.TourLists.Commands.DeleteTourList
 {
-    public class DeleteTourListCommand : IRequest
+  public class DeleteTourListCommand : IRequest
+  {
+    public int Id { get; set; }
+  }
+
+  public class DeleteTourListCommandHandler : IRequestHandler<DeleteTourListCommand>
+  {
+    private readonly IApplicationDbContext _context;
+    public DeleteTourListCommandHandler(IApplicationDbContext context)
     {
-        public int Id { get; set; }
+      _context = context;
     }
 
-    public class DeleteTourListCommandHandler : IRequestHandler<DeleteTourListCommand>
+    public async Task<Unit> Handle(DeleteTourListCommand request, CancellationToken cancellationToken)
     {
-        private readonly IApplicationDbContext _context;
-        public DeleteTourListCommandHandler(IApplicationDbContext context)
-        {
-            _context = context;
-        }
+      var entity = await _context.TourLists
+        .Where(l => l.Id == request.Id)
+        .SingleOrDefaultAsync(cancellationToken);
 
-        public async Task<Unit> Handle(DeleteTourListCommand request, CancellationToken cancellationToken)
-        {
-            var entity = await _context.TourLists
-                .Where(l => l.Id == request.Id)
-                .SingleOrDefaultAsync(cancellationToken);
+      if (entity == null)
+      {
+        throw new NotFoundException(nameof(TourList), request.Id);
+      }
 
-            if (entity == null)
-            {
-                throw new NotFoundException(nameof(TourLists), request.Id);
-            }
+      _context.TourLists.Remove(entity);
+      await _context.SaveChangesAsync(cancellationToken);
 
-            _context.TourLists.Remove(entity);
-            await _context.SaveChangesAsync(cancellationToken);
-
-            return Unit.Value;
-        }
+      return Unit.Value;
     }
+  }
 }

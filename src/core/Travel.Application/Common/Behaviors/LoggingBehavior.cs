@@ -1,7 +1,7 @@
+﻿using MediatR.Pipeline;
+using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
-using MediatR.Pipeline;
-using Microsoft.Extensions.Logging;
 
 namespace Travel.Application.Common.Behaviors
 {
@@ -9,11 +9,15 @@ namespace Travel.Application.Common.Behaviors
     {
         private readonly ILogger _logger;
 
+        public LoggingBehavior(ILogger<TRequest> logger)
+        {
+            _logger = logger;
+        }
+
         public async Task Process(TRequest request, CancellationToken cancellationToken)
         {
             var requestName = typeof(TRequest).Name;
-            _logger.LogInformation("Travel Request: {@Request}",
-            requestName, request);
+            _logger.LogInformation("Travel Request: {Name} {@Request}", requestName, request);
         }
     }
 }
